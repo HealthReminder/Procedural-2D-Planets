@@ -10,6 +10,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.T))
-            GlobalGenerator.instance.GeneratePlateTectonics(planet);
+            PlanetGenerator.instance.GeneratePlateTectonics(planet);
     }
 }

@@ -13,10 +13,14 @@ using UnityEngine;
 
 [System.Serializable] public class PlateTectonic {
     public int type;
-    public float defaultHeight;
     public int weightIndex;
     public float movementForce;
     public List<Transform> bones;
     
+}
+[System.Serializable] public class PlateBone {
+    public Transform transform;
+    public float pressure;
+    public float height;
 }
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalGenerator : MonoBehaviour
+public class PlanetGenerator : MonoBehaviour
 {
-    public static GlobalGenerator instance;
+    public float initialBoneDistanceFromCore = 1;
+    public float heightDifferenceFromPlateType = 1;
+    public static PlanetGenerator instance;
     private void Awake() {
         instance = this;
     }
@@ -15,23 +17,22 @@ public class GlobalGenerator : MonoBehaviour
     IEnumerator GeneratePlateTectonicsRoutine(Planet planet){
         Debug.Log("TECTONICS - Initiated");
 
-
+        PlanetView.instance.Clear();
 
         Transform[] planetBones = planet.bones;
         for (int currentBone = 0; currentBone < planetBones.Length; currentBone++)
         {
-            planetBones[currentBone].position = new Vector3(0,0,0);
+            planetBones[currentBone].position = planet.transform.position + (planetBones[currentBone].right*10*-initialBoneDistanceFromCore);
         }
         yield return null;
         Debug.Log("TECTONICS - Reseted bone positions");
-
 
         planet.transform.Rotate(new Vector3(0,0,Random.Range(0,361)));
         Debug.Log("TECTONICS - Assigned initial random rotation");
 
 
 
-        int plateQuantity = Random.Range(2,7);
+        int plateQuantity = Random.Range(2,12);
         planet.plateQuantity = plateQuantity;
         Debug.Log("TECTONICS - Set plate quantity to "+plateQuantity);
 
@@ -73,28 +74,25 @@ public class GlobalGenerator : MonoBehaviour
 
         
 
-        for (int currentPlate = 0; currentPlate < newPlates.Length; currentPlate++)
+        //float heightDifferenceFromPlateType = Random.Range(1,3);
+        for (int currentPlateIndex = 0; currentPlateIndex < newPlates.Length; currentPlateIndex++)
         {
-            float defaultPlateHeight;
-            if(newPlates[currentPlate].type == 0)
-                defaultPlateHeight = Random.Range(1,1.8f);
-            else
-                defaultPlateHeight = Random.Range(2.2f,3f);
-            newPlates[currentPlate].defaultHeight = defaultPlateHeight;
-            Transform currentBoneT;
-            for (int currentBone = 0; currentBone < newPlates[currentPlate].bones.Count; currentBone++)
-            {
-                currentBoneT = newPlates[currentPlate].bones[currentBone].transform; 
-                currentBoneT.position = currentBoneT.right * defaultPlateHeight;
-            }
+            PlateTectonic currentPlate = newPlates[currentPlateIndex];
+            if(currentPlate.type == 1)
+                for (int currentBone = 0; currentBone < currentPlate.bones.Count; currentBone++)
+                {
+                    currentPlate.bones[currentBone].position += -currentPlate.bones[currentBone].right * heightDifferenceFromPlateType;
+                }
             yield return null;
         }
+        yield return null;
         planet.plates = newPlates;
         Debug.Log("TECTONICS - Set initial plate positions");
 
+        
 
         int tectonicPoints = Random.Range(1,planet.plateQuantity);
-        int tectonicActivity = Random.Range(1,planet.plateQuantity/2);
+        int tectonicActivity = Random.Range(1,4);
         for (int currentPoint = 0; currentPoint < tectonicPoints; currentPoint++)
         {
             
@@ -110,7 +108,7 @@ public class GlobalGenerator : MonoBehaviour
 
             newPlates[initialPointIndex].movementForce = initialForce;
 
-            
+            PlanetView.instance.SpawnVolcano(newPlates[initialPointIndex].bones[Random.Range(0,newPlates[initialPointIndex].bones.Count)]);
             if(initialForce < 0){
                 int currentPlateIndex = initialPointIndex -1;
                 for (float currentForce = initialForce-1; currentForce < 0; currentForce++)
@@ -282,28 +280,6 @@ public class GlobalGenerator : MonoBehaviour
                     }
                 }
             }
-            
-            /*
-            if(attackForce > 0){
-
-                for(float eventQuantity = newPlates[currentPlate].movementForce; eventQuantity > 0;){
-                    if(eventQuantity < 1)
-                        MoveRandomTransformRight(newPlates[currentPlate].bones,1,eventQuantity);
-                    else
-                        MoveRandomTransformRight(newPlates[currentPlate].bones,1,0.8f);
-                        
-                    eventQuantity--;
-                }
-                
-            } else {
-                for(float eventQuantity = -1*newPlates[currentPlate].movementForce; eventQuantity > 0;){
-                    if(eventQuantity < 1)
-                        MoveRandomTransformRight(newPlates[currentPlate].bones,-1,eventQuantity);
-                    else
-                        MoveRandomTransformRight(newPlates[currentPlate].bones,-1,0.5f);
-                    eventQuantity--;
-                }
-            } */
             yield return null;   
         }
 
@@ -328,5 +304,12 @@ public class GlobalGenerator : MonoBehaviour
 
         Transform bone = bones[randomIndex];
         bone.position += bone.right*direction*amount;
+
+        //if(amount < 1f)
+        //    return;
+        
+        //int coinFlip = Random.Range(0,2);
+        //if(coinFlip == 0)
+        //    PlanetView.instance.SpawnVolcano(bone);
     }
 }
