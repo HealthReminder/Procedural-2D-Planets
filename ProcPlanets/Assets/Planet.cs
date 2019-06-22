@@ -15,12 +15,12 @@ using UnityEngine;
     public int type;
     public int weightIndex;
     public float movementForce;
-    public List<Transform> bones;
+    public List<PlateBone> bones;
     
 }
 [System.Serializable] public class PlateBone {
     public Transform transform;
     public float pressure;
-    public float height;
+    public Vector3 translation;
 }
 
