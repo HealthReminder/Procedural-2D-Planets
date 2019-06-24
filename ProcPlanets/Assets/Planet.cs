@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
    public class Planet : MonoBehaviour
 {
+    public PolygonCollider2D collider;
     public Transform[]  bones;
     [Header("Plate tectonics")]
     public int plateQuantity;

@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public int planetSeed;
     public Planet planet;
 
     // Update is called once per frame
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.T))
-            PlanetGenerator.instance.GeneratePlateTectonics(planet);
+            PlanetGenerator.instance.GeneratePlateTectonics(planet,planetSeed);
     }
 }

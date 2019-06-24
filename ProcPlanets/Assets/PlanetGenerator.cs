@@ -11,28 +11,41 @@ public class PlanetGenerator : MonoBehaviour
         instance = this;
     }
 
-    public void GeneratePlateTectonics(Planet planet) {
-        StartCoroutine(GeneratePlateTectonicsRoutine(planet));
+    public void GeneratePlateTectonics(Planet planet,int seed) {
+        StartCoroutine(GeneratePlateTectonicsRoutine(planet,seed));
     }
-    IEnumerator GeneratePlateTectonicsRoutine(Planet planet){
+    IEnumerator GeneratePlateTectonicsRoutine(Planet planet,int seed){
         Debug.Log("TECTONICS - Initiated");
 
-        PlanetView.instance.Clear();
+        LineTest.instance.DisableLines();
 
+        float randomSeed = Random.Range(0,1f);
+        float rotationSeed = Random.Range(0f,1f);
+        float tectonicsSeed = Random.Range(0f,1f);
+        Debug.Log(randomSeed+"A"+rotationSeed+"B"+tectonicsSeed+"C");
+        Random.InitState((int)Mathf.Lerp(0,999999,randomSeed));
+        yield return null;
+        Debug.Log("TECTONICS - Generated variables");
+            
+
+    
+        PlanetView.instance.Clear();
+        planet.enabled = false;
         Transform[] planetBones = planet.bones;
         for (int currentBone = 0; currentBone < planetBones.Length; currentBone++)
-        {
             planetBones[currentBone].position = planet.transform.position + (planetBones[currentBone].right*10*-initialBoneDistanceFromCore);
-        }
+        
         yield return null;
-        Debug.Log("TECTONICS - Reseted bone positions");
+        Debug.Log("TECTONICS - Reseted bone positions and collider");
 
-        planet.transform.Rotate(new Vector3(0,0,Random.Range(0,361)));
+
+
+        planet.transform.Rotate(new Vector3(0,0,Mathf.Lerp(0,360,rotationSeed)));
         Debug.Log("TECTONICS - Assigned initial random rotation");
 
 
 
-        int plateQuantity = Random.Range(2,12);
+        int plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
         planet.plateQuantity = plateQuantity;
         Debug.Log("TECTONICS - Set plate quantity to "+plateQuantity);
 
@@ -58,8 +71,8 @@ public class PlanetGenerator : MonoBehaviour
             newBone.transform = planetBones[currentBone];
             newPlates[identification].bones.Add(newBone);
         }
-        yield return null;
         planet.plates = newPlates;
+        yield return null;
         Debug.Log("TECTONICS - Assigned reseted bones to plates");
 
 
@@ -74,6 +87,7 @@ public class PlanetGenerator : MonoBehaviour
             }newPlates[currentPlate].movementForce = 0;
         }
         planet.plates = newPlates;
+        yield return null;
         Debug.Log("TECTONICS - Assigned types, weights and initial movement force to plates");
 
         
@@ -92,14 +106,14 @@ public class PlanetGenerator : MonoBehaviour
                 }
             yield return null;
         }
-        yield return null;
         planet.plates = newPlates;
+        yield return null;
         Debug.Log("TECTONICS - Set initial plate positions");
 
         
 
-        int tectonicActivity = Random.Range(2,4);
-        int tectonicPoints = Random.Range(tectonicActivity,planet.plateQuantity);
+        int tectonicActivity = (int)(Mathf.Lerp(0,4,tectonicsSeed));
+        int tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,planet.plateQuantity,tectonicsSeed));
         for (int currentPoint = 0; currentPoint < tectonicPoints; currentPoint++)
         {
             
@@ -181,7 +195,6 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(rightPlate.bones,-1,iterationsLeft); 
                                 iterationsLeft = -1;
                             }
-                            yield return null;
                         }
                     } else {
                         //The right plate is the heaviest
@@ -196,7 +209,6 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(rightPlate.bones,-1,iterationsLeft); 
                                 iterationsLeft = -1;
                             }
-                            yield return null;
                         }
                         
                     }
@@ -213,7 +225,6 @@ public class PlanetGenerator : MonoBehaviour
                             MoveRandomBone(rightPlate.bones,-1,-iterationsLeft);
                             iterationsLeft = -1;
                         }
-                        yield return null;
                     }
                     
                 }
@@ -232,7 +243,6 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(rightPlate.bones,-1,iterationsLeft);
                                 iterationsLeft = -1;
                             }
-                        yield return null;
                         }
                         
                     } else {
@@ -247,7 +257,6 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(leftPlate.bones,1,iterationsLeft);
                                 iterationsLeft = -1;
                             }
-                        yield return null;
                         }
                     }
                 } else {
@@ -264,7 +273,6 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(rightPlate.bones,-1,iterationsLeft);
                                 iterationsLeft = -1;
                             }
-                        yield return null;
                         }
                     } else {
                         //The right plate is the heaviest
@@ -278,17 +286,44 @@ public class PlanetGenerator : MonoBehaviour
                                 MoveRandomBone(leftPlate.bones,1,iterationsLeft);
                                 iterationsLeft = -1;
                             }
-                        yield return null;
                         }
                     }
                 }
             }
             yield return null;   
         }
-
-
-
         Debug.Log("TECTONICS - Ran early event interaction");
+
+
+
+        
+
+
+
+        Vector2[] newColliderPoints = new Vector2[planetBones.Length];
+        for (int i = 0; i < newColliderPoints.Length; i++)
+        {
+            newColliderPoints[i] = planetBones[i].localPosition;
+            yield return null;   
+        }
+        planet.collider.points = newColliderPoints;
+        planet.enabled = true;
+        yield return null;   
+        Debug.Log("TECTONICS - Fixed collider");
+
+
+
+        foreach(PlateTectonic currentPlate in planet.plates){
+            AddPlateFeatures(currentPlate.bones,tectonicActivity/2);
+            yield return null;
+        }
+
+
+
+        LineTest.instance.SetLines(planet.plates);
+        yield return null;
+        Debug.Log("TECTONICS - Line test");
+        
 
 
         Debug.Log("TECTONICS - Ended");
@@ -296,6 +331,27 @@ public class PlanetGenerator : MonoBehaviour
 
         
         yield break;
+    }
+    
+    void AddPlateFeatures(List<PlateBone> bones, int volcanicPoints) {
+        //HERE YOU NEED TO GET THE LIST OF BONES ORDERED BY PRESSURE MAGNITUDE 
+        //YOU MUST REALIZE THE VOLCANIC FEATURES USING THE VOLCANICPOINTS
+        int placedVolcanos = 0;
+        for (int currentBoneIndex = 0; currentBoneIndex < bones.Count; currentBoneIndex++)
+        {
+            if(placedVolcanos >= volcanicPoints)
+                return;
+
+            PlateBone bone = bones[currentBoneIndex];
+            if(bone.pressure >= 1.35f){
+                //Debug.Log("Spawned volcano on "+bone.transform.name);
+                PlanetView.instance.SpawnVolcano(bone.transform);
+            } else if(bone.pressure <= -1.8f){
+                //Debug.Log("Spawned underwater volcano on "+bone.transform.name);
+                PlanetView.instance.SpawnUnderwaterVolcano(bone.transform);
+            }
+            placedVolcanos++;
+        }
     }
 
     void MoveRandomBone(List<PlateBone> bones,int direction, float amount) {
@@ -306,21 +362,10 @@ public class PlanetGenerator : MonoBehaviour
             randomIndex = Random.Range(0,bones.Count/2);
 
         PlateBone bone = bones[randomIndex];
-        Debug.Log(bone.transform.name+"   "+(-1*direction*amount) + "   "+bone.pressure+ "   "+(bone.pressure+(-1*direction*amount)));
+        //Debug.Log(bone.transform.name+"   "+(-1*direction*amount) + "   "+bone.pressure+ "   "+(bone.pressure+(-1*direction*amount)));
 
         bone.transform.position += bone.transform.right*direction*amount;
         bone.pressure += -1*direction*amount;
         int coinFlip = Random.Range(0,2);
-        if(bone.pressure >= 1.35f){
-            if(coinFlip == 1){
-                Debug.Log("Spawned volcano on "+bone.transform.name);
-                PlanetView.instance.SpawnVolcano(bone.transform);
-            }
-        } else if(bone.pressure <= -1.8f){
-            if(coinFlip == 1){
-                Debug.Log("Spawned underwater volcano on "+bone.transform.name);
-                PlanetView.instance.SpawnUnderwaterVolcano(bone.transform);
-            }
-        }
     }
 }
