@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlanetView : MonoBehaviour
 {
+    [Header("Oceans")]
+    public Transform oceantransform;
     [Header("Volcano")]
     public GameObject volcanoPrefab;
     private List<GameObject> volcanoList;
@@ -15,6 +17,15 @@ public class PlanetView : MonoBehaviour
     public static PlanetView instance;
     private void Awake() {
         instance = this;
+    }
+
+    public void ScaleOceans(float rate, float percentage) {
+        percentage = Mathf.Lerp(1.3f,2.3f,percentage);
+        oceantransform.localScale = new Vector3(rate*percentage,rate*percentage,rate*percentage);
+        if(percentage >=0.1f)
+            oceantransform.gameObject.SetActive(true);
+        else 
+            oceantransform.gameObject.SetActive(false);
     }
     public void SpawnVolcano(Transform boneTransform) {
         GameObject newVolcano = Instantiate(volcanoPrefab, boneTransform.position, Quaternion.identity);

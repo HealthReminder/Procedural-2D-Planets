@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlanetGenerator : MonoBehaviour
 {
-    public float initialBoneDistanceFromCore = 1;
-    public float heightDifferenceFromPlateType = 1;
+    //public float initialBoneDistanceFromCore = 1;
+    //public float heightDifferenceFromPlateType = 1;
     public static PlanetGenerator instance;
     private void Awake() {
         instance = this;
@@ -18,29 +18,41 @@ public class PlanetGenerator : MonoBehaviour
         Debug.Log("TECTONICS - Initiated");
 
         LineTest.instance.DisableLines();
+        GlobalNotification.instance.Reset();
+        yield return null;
 
         float randomSeed = Random.Range(0,1f);
-        float rotationSeed = Random.Range(0f,1f);
         float tectonicsSeed = Random.Range(0f,1f);
-        Debug.Log(randomSeed+"A"+rotationSeed+"B"+tectonicsSeed+"C");
+        float transformSeed = Random.Range(0f,1f);
+        float oceanSeed = Random.Range(0f,1f);
+
+        //tectonicsSeed = 1;
+        ///transformSeed = 1;
+        //oceanSeed = 1;
+
+        string seedText = randomSeed+"A"+transformSeed+"B"+tectonicsSeed+"C";
         Random.InitState((int)Mathf.Lerp(0,999999,randomSeed));
         yield return null;
-        Debug.Log("TECTONICS - Generated variables");
+        Debug.Log("TECTONICS - Generated variables "+seedText);
             
 
     
         PlanetView.instance.Clear();
         planet.enabled = false;
+        float initialBoneDistanceFromCore = Mathf.Lerp(1,3,transformSeed);
         Transform[] planetBones = planet.bones;
         for (int currentBone = 0; currentBone < planetBones.Length; currentBone++)
             planetBones[currentBone].position = planet.transform.position + (planetBones[currentBone].right*10*-initialBoneDistanceFromCore);
-        
+        PlanetView.instance.ScaleOceans(Mathf.Lerp(1,3,transformSeed),oceanSeed);
         yield return null;
+        GlobalNotification.instance.PostNotification("Initial bone distance from core: <color=#ffff00ff>"+(int)(100*(initialBoneDistanceFromCore+1)/3)+"%</color>\n");
+        GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
         Debug.Log("TECTONICS - Reseted bone positions and collider");
 
 
 
-        planet.transform.Rotate(new Vector3(0,0,Mathf.Lerp(0,360,rotationSeed)));
+
+        planet.transform.Rotate(new Vector3(0,0,Mathf.Lerp(0,360,transformSeed)));
         Debug.Log("TECTONICS - Assigned initial random rotation");
 
 
@@ -48,6 +60,7 @@ public class PlanetGenerator : MonoBehaviour
         int plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
         planet.plateQuantity = plateQuantity;
         Debug.Log("TECTONICS - Set plate quantity to "+plateQuantity);
+        GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
 
 
         PlateTectonic[] newPlates = new PlateTectonic[plateQuantity];
@@ -92,7 +105,8 @@ public class PlanetGenerator : MonoBehaviour
 
         
 
-        //float heightDifferenceFromPlateType = Random.Range(1,3);
+        float heightDifferenceFromPlateType = Mathf.Lerp(1,3, transformSeed);
+        GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
         for (int currentPlateIndex = 0; currentPlateIndex < newPlates.Length; currentPlateIndex++)
         {
             PlateTectonic currentPlate = newPlates[currentPlateIndex];
@@ -103,6 +117,7 @@ public class PlanetGenerator : MonoBehaviour
                     currentBone = currentPlate.bones[currentBoneIndex];
                     currentBone.transform.position += -currentBone.transform.right * heightDifferenceFromPlateType;
                     currentBone.translation += -currentBone.transform.right * heightDifferenceFromPlateType;
+
                 }
             yield return null;
         }
@@ -112,8 +127,10 @@ public class PlanetGenerator : MonoBehaviour
 
         
 
-        int tectonicActivity = (int)(Mathf.Lerp(0,4,tectonicsSeed));
+        float tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed);
         int tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,planet.plateQuantity,tectonicsSeed));
+        GlobalNotification.instance.PostNotification("Tectonic activity: <color=#ffff00ff>"+(int)(100*tectonicActivity/3)+"%</color>\n");
+        GlobalNotification.instance.PostNotification("Tectonic points: <color=#ffff00ff>"+tectonicPoints+"</color>\n");
         for (int currentPoint = 0; currentPoint < tectonicPoints; currentPoint++)
         {
             
@@ -187,12 +204,12 @@ public class PlanetGenerator : MonoBehaviour
                         for (float iterationsLeft = eventForce/2; iterationsLeft > 0;)
                         {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(leftPlate.bones,1,-1);
-                                MoveRandomBone(rightPlate.bones,-1,1); 
+                                MoveRandomBone(leftPlate.bones,1,-1,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,1,transformSeed); 
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft);
-                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft); 
+                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft,transformSeed); 
                                 iterationsLeft = -1;
                             }
                         }
@@ -201,12 +218,12 @@ public class PlanetGenerator : MonoBehaviour
                         for (float iterationsLeft = eventForce/2; iterationsLeft > 0;)
                         {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(rightPlate.bones,-1,-1);
-                                MoveRandomBone(leftPlate.bones,1,1);
+                                MoveRandomBone(rightPlate.bones,-1,-1,transformSeed);
+                                MoveRandomBone(leftPlate.bones,1,1,transformSeed);
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft);
-                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft); 
+                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft,transformSeed); 
                                 iterationsLeft = -1;
                             }
                         }
@@ -217,12 +234,12 @@ public class PlanetGenerator : MonoBehaviour
                     //The left plate is the heaviest
                     for (float iterationsLeft = eventForce; iterationsLeft > 0;)  {
                         if(iterationsLeft >= 1) {
-                            MoveRandomBone(leftPlate.bones,1,-1);
-                            MoveRandomBone(rightPlate.bones,-1,-1);
+                            MoveRandomBone(leftPlate.bones,1,-1,transformSeed);
+                            MoveRandomBone(rightPlate.bones,-1,-1,transformSeed);
                             iterationsLeft -= 1;
                         } else {
-                            MoveRandomBone(leftPlate.bones,1,-iterationsLeft);
-                            MoveRandomBone(rightPlate.bones,-1,-iterationsLeft);
+                            MoveRandomBone(leftPlate.bones,1,-iterationsLeft,transformSeed);
+                            MoveRandomBone(rightPlate.bones,-1,-iterationsLeft,transformSeed);
                             iterationsLeft = -1;
                         }
                     }
@@ -235,12 +252,12 @@ public class PlanetGenerator : MonoBehaviour
                         //The left plate is the heaviest
                         for (float iterationsLeft = eventForce; iterationsLeft > 0;)  {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(leftPlate.bones,1,-1);
-                                MoveRandomBone(rightPlate.bones,-1,1);
+                                MoveRandomBone(leftPlate.bones,1,-1,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,1,transformSeed);
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft);
-                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft);
+                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft,transformSeed);
                                 iterationsLeft = -1;
                             }
                         }
@@ -249,12 +266,12 @@ public class PlanetGenerator : MonoBehaviour
                         //The right plate is the heaviest
                         for (float iterationsLeft = eventForce; iterationsLeft > 0;)  {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(rightPlate.bones,-1,-1);
-                                MoveRandomBone(leftPlate.bones,1,1);
+                                MoveRandomBone(rightPlate.bones,-1,-1,transformSeed);
+                                MoveRandomBone(leftPlate.bones,1,1,transformSeed);
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(rightPlate.bones,-1,-iterationsLeft);
-                                MoveRandomBone(leftPlate.bones,1,iterationsLeft);
+                                MoveRandomBone(rightPlate.bones,-1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(leftPlate.bones,1,iterationsLeft,transformSeed);
                                 iterationsLeft = -1;
                             }
                         }
@@ -265,12 +282,12 @@ public class PlanetGenerator : MonoBehaviour
                         //The left plate is the heaviest
                         for (float iterationsLeft = eventForce/2; iterationsLeft > 0;)  {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(leftPlate.bones,1,-1);
-                                MoveRandomBone(rightPlate.bones,-1,1);
+                                MoveRandomBone(leftPlate.bones,1,-1,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,1,transformSeed);
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft);
-                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft);
+                                MoveRandomBone(leftPlate.bones,1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(rightPlate.bones,-1,iterationsLeft,transformSeed);
                                 iterationsLeft = -1;
                             }
                         }
@@ -278,12 +295,12 @@ public class PlanetGenerator : MonoBehaviour
                         //The right plate is the heaviest
                         for (float iterationsLeft = eventForce/2; iterationsLeft > 0;)  {
                             if(iterationsLeft >= 1) {
-                                MoveRandomBone(rightPlate.bones,-1,-1);
-                                MoveRandomBone(leftPlate.bones,1,1);
+                                MoveRandomBone(rightPlate.bones,-1,-1,transformSeed);
+                                MoveRandomBone(leftPlate.bones,1,1,transformSeed);
                                 iterationsLeft -= 1;
                             } else {
-                                MoveRandomBone(rightPlate.bones,-1,-iterationsLeft);
-                                MoveRandomBone(leftPlate.bones,1,iterationsLeft);
+                                MoveRandomBone(rightPlate.bones,-1,-iterationsLeft,transformSeed);
+                                MoveRandomBone(leftPlate.bones,1,iterationsLeft,transformSeed);
                                 iterationsLeft = -1;
                             }
                         }
@@ -293,10 +310,6 @@ public class PlanetGenerator : MonoBehaviour
             yield return null;   
         }
         Debug.Log("TECTONICS - Ran early event interaction");
-
-
-
-        
 
 
 
@@ -314,7 +327,7 @@ public class PlanetGenerator : MonoBehaviour
 
 
         foreach(PlateTectonic currentPlate in planet.plates){
-            AddPlateFeatures(currentPlate.bones,tectonicActivity/2);
+            AddPlateFeatures(currentPlate.bones,1+((int)tectonicActivity/2));
             yield return null;
         }
 
@@ -354,18 +367,25 @@ public class PlanetGenerator : MonoBehaviour
         }
     }
 
-    void MoveRandomBone(List<PlateBone> bones,int direction, float amount) {
+    void MoveRandomBone(List<PlateBone> bones,int direction, float amount, float transformSeed) {
         int randomIndex = -1;
-        if(direction == 1)
+        PlateBone bone;
+        if(direction == 1){
             randomIndex = Random.Range(bones.Count/2,bones.Count);
-        else 
+            bone = bones[randomIndex];
+            if(bone.pressure >= 3) 
+                return;
+        } else {
             randomIndex = Random.Range(0,bones.Count/2);
+            bone = bones[randomIndex];
+            if(bone.pressure <= -2.5f) 
+                return;
+        }
 
-        PlateBone bone = bones[randomIndex];
         //Debug.Log(bone.transform.name+"   "+(-1*direction*amount) + "   "+bone.pressure+ "   "+(bone.pressure+(-1*direction*amount)));
-
-        bone.transform.position += bone.transform.right*direction*amount;
-        bone.pressure += -1*direction*amount;
-        int coinFlip = Random.Range(0,2);
+        float heightFromTransformSeed = Mathf.Lerp(0.3f,1f,transformSeed);
+        bone.transform.position += bone.transform.right*direction*amount*heightFromTransformSeed;
+        bone.pressure += -1*direction*amount*heightFromTransformSeed;
+        
     }
 }
