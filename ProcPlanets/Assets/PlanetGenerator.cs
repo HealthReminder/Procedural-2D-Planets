@@ -24,16 +24,22 @@ public class PlanetGenerator : MonoBehaviour
         float randomSeed = Random.Range(0,1f);
         float tectonicsSeed = Random.Range(0f,1f);
         float transformSeed = Random.Range(0f,1f);
-        float oceanSeed = Random.Range(0f,1f);
+        float oceanSeed = Random.Range(0.5f,1f);
 
         //tectonicsSeed = 1;
-        ///transformSeed = 1;
+        transformSeed = 1;
         //oceanSeed = 1;
 
         string seedText = randomSeed+"A"+transformSeed+"B"+tectonicsSeed+"C";
         Random.InitState((int)Mathf.Lerp(0,999999,randomSeed));
         yield return null;
         Debug.Log("TECTONICS - Generated variables "+seedText);
+
+
+        float r = Random.Range(0f,1f);
+        PlanetView.instance.ChangeColor(r,r,r);
+        yield return null;
+        Debug.Log("COLOR - Changed colors");
             
 
     

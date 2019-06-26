@@ -13,6 +13,10 @@ public class PlanetView : MonoBehaviour
     [Header("Underwater Volcanos")]
     public GameObject underwaterVolcanoPrefab;
     private List<GameObject> underwaterVolcanoList;
+    [Header("Color")]
+    public SpriteRenderer soilRenderer;
+    public SpriteRenderer[] atmosphereRenderers,waterRenderers;
+    public Gradient solidColors,liquidColors,armosphereColors;
 
     public static PlanetView instance;
     private void Awake() {
@@ -61,5 +65,13 @@ public class PlanetView : MonoBehaviour
             underwaterVolcanoList.RemoveAt(currentUVolcano);
         }
         underwaterVolcanoList = new List<GameObject>();
+    }
+
+    public void ChangeColor(float solidColor,float liquidColor,float atmosphericColor) {
+        soilRenderer.color = solidColors.Evaluate(solidColor);
+        foreach (SpriteRenderer r in waterRenderers)
+            r.color = liquidColors.Evaluate(liquidColor);
+        foreach (SpriteRenderer r in atmosphereRenderers)
+            r.color = armosphereColors.Evaluate(atmosphericColor);
     }
 }
