@@ -15,7 +15,7 @@ public class PlanetGenerator : MonoBehaviour
         StartCoroutine(GeneratePlateTectonicsRoutine(planet,seed));
     }
     IEnumerator GeneratePlateTectonicsRoutine(Planet planet,int seed){
-        Debug.Log("TECTONICS - Initiated");
+        Debug.Log("PLANET GENERATOR - Initiated");
 
         LineTest.instance.DisableLines();
         GlobalNotification.instance.Reset();
@@ -25,48 +25,74 @@ public class PlanetGenerator : MonoBehaviour
         float tectonicsSeed = Random.Range(0f,1f);
         float transformSeed = Random.Range(0f,1f);
         float oceanSeed = Random.Range(0.5f,1f);
+        Debug.Log("PLANET GENERATOR - Generated seeds");
 
         //tectonicsSeed = 1;
         transformSeed = 1;
         //oceanSeed = 1;
 
-        string seedText = randomSeed+"A"+transformSeed+"B"+tectonicsSeed+"C";
+        
+        float randomColor;
+        float initialBoneDistanceFromCore;
+        int plateQuantity;
+        int tectonicPoints;
+        float heightDifferenceFromPlateType;
+        float tectonicActivity;
+        yield return null;
+        Debug.Log("PLANET GENERATOR - Cached variables");
+
+
+        
         Random.InitState((int)Mathf.Lerp(0,999999,randomSeed));
+        randomColor = Random.Range(0f,1f);
+        initialBoneDistanceFromCore = Mathf.Lerp(1,3,transformSeed);
+        plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
+        tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed);
+        tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,plateQuantity,tectonicsSeed));
+        heightDifferenceFromPlateType = Mathf.Lerp(1,3, transformSeed);
         yield return null;
-        Debug.Log("TECTONICS - Generated variables "+seedText);
+        Debug.Log("PLANET GENERATOR - Generated variables ");
 
 
-        float r = Random.Range(0f,1f);
-        PlanetView.instance.ChangeColor(r,r,r);
+        
+        planet.data.tectonicPoints = tectonicPoints;
+        planet.data.plateQuantity = plateQuantity;
+        planet.data.heightDifferenceFromPlateType = heightDifferenceFromPlateType;
+        planet.data.initialBoneDistanceFromCore = initialBoneDistanceFromCore;
+        planet.data.tectonicActivity = tectonicActivity;
+        planet.data.colorIndex = randomColor;
+        Debug.Log("PLANET GENERATOR - Stored generated variables");
+
+
+
+        GlobalNotification.instance.PostNotification("Initial bone distance from core: <color=#ffff00ff>"+(int)(100*(initialBoneDistanceFromCore+1)/3)+"%</color>\n");
+        GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
+        GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
+        GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
+        Debug.Log("PLANET GENERATOR - Posted notifications");
+
+        
+
+        PlanetView.instance.ChangeColor(randomColor,randomColor,randomColor);
         yield return null;
-        Debug.Log("COLOR - Changed colors");
+        Debug.Log("PLANET GENERATOR - Changed colors");
             
 
     
         PlanetView.instance.Clear();
         planet.enabled = false;
-        float initialBoneDistanceFromCore = Mathf.Lerp(1,3,transformSeed);
         Transform[] planetBones = planet.bones;
         for (int currentBone = 0; currentBone < planetBones.Length; currentBone++)
             planetBones[currentBone].position = planet.transform.position + (planetBones[currentBone].right*10*-initialBoneDistanceFromCore);
         PlanetView.instance.ScaleOceans(Mathf.Lerp(1,3,transformSeed),oceanSeed);
         yield return null;
-        GlobalNotification.instance.PostNotification("Initial bone distance from core: <color=#ffff00ff>"+(int)(100*(initialBoneDistanceFromCore+1)/3)+"%</color>\n");
-        GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
-        Debug.Log("TECTONICS - Reseted bone positions and collider");
-
-
+        Debug.Log("PLANET GENERATOR - Reseted bone positions and collider");
+        
 
 
         planet.transform.Rotate(new Vector3(0,0,Mathf.Lerp(0,360,transformSeed)));
-        Debug.Log("TECTONICS - Assigned initial random rotation");
+        Debug.Log("PLANET GENERATOR - Assigned initial random rotation");
 
-
-
-        int plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
-        planet.plateQuantity = plateQuantity;
-        Debug.Log("TECTONICS - Set plate quantity to "+plateQuantity);
-        GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
 
 
         PlateTectonic[] newPlates = new PlateTectonic[plateQuantity];
@@ -76,7 +102,7 @@ public class PlanetGenerator : MonoBehaviour
             newPlates[currentPlate].bones = new List<PlateBone>();
         }
         yield return null;
-        Debug.Log("TECTONICS - Reseted plates");
+        Debug.Log("PLANET GENERATOR - Reseted plates");
 
 
 
@@ -92,7 +118,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("TECTONICS - Assigned reseted bones to plates");
+        Debug.Log("PLANET GENERATOR - Assigned reseted bones to plates");
 
 
 
@@ -107,12 +133,10 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("TECTONICS - Assigned types, weights and initial movement force to plates");
+        Debug.Log("PLANET GENERATOR - Assigned types, weights and initial movement force to plates");
 
         
 
-        float heightDifferenceFromPlateType = Mathf.Lerp(1,3, transformSeed);
-        GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
         for (int currentPlateIndex = 0; currentPlateIndex < newPlates.Length; currentPlateIndex++)
         {
             PlateTectonic currentPlate = newPlates[currentPlateIndex];
@@ -129,12 +153,10 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("TECTONICS - Set initial plate positions");
+        Debug.Log("PLANET GENERATOR - Set initial plate positions");
 
         
 
-        float tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed);
-        int tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,planet.plateQuantity,tectonicsSeed));
         GlobalNotification.instance.PostNotification("Tectonic activity: <color=#ffff00ff>"+(int)(100*tectonicActivity/3)+"%</color>\n");
         GlobalNotification.instance.PostNotification("Tectonic points: <color=#ffff00ff>"+tectonicPoints+"</color>\n");
         for (int currentPoint = 0; currentPoint < tectonicPoints; currentPoint++)
@@ -182,9 +204,9 @@ public class PlanetGenerator : MonoBehaviour
             }
             yield return null;    
         }
-        planet.tectonicPointsQuantity = tectonicPoints;
+        
         planet.plates = newPlates;
-        Debug.Log("TECTONICS - Distributed plate flows");
+        Debug.Log("PLANET GENERATOR - Distributed plate flows");
 
 
         PlateTectonic leftPlate;
@@ -315,7 +337,7 @@ public class PlanetGenerator : MonoBehaviour
             }
             yield return null;   
         }
-        Debug.Log("TECTONICS - Ran early event interaction");
+        Debug.Log("PLANET GENERATOR - Ran early event interaction");
 
 
 
@@ -328,7 +350,7 @@ public class PlanetGenerator : MonoBehaviour
         planet.collider.points = newColliderPoints;
         planet.enabled = true;
         yield return null;   
-        Debug.Log("TECTONICS - Fixed collider");
+        Debug.Log("PLANET GENERATOR - Fixed collider");
 
 
 
@@ -341,7 +363,7 @@ public class PlanetGenerator : MonoBehaviour
 
         LineTest.instance.SetLines(planet.plates);
         yield return null;
-        Debug.Log("TECTONICS - Line test");
+        Debug.Log("PLANET GENERATOR - Line test");
         
 
 

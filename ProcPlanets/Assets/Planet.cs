@@ -6,10 +6,23 @@ using UnityEngine;
     public PolygonCollider2D collider;
     public Transform[]  bones;
     [Header("Plate tectonics")]
-    public int plateQuantity;
-    [SerializeField]  public PlateTectonic[] plates;
-    public int tectonicPointsQuantity;
     
+    [SerializeField]  public PlateTectonic[] plates;
+    public PlanetData data;
+    
+    private void Awake() {
+        data = new PlanetData();
+    }
+}
+public class PlanetData {
+    [Header("Tectonics")]
+    public float initialBoneDistanceFromCore; //initialBoneDistanceFromCore
+    public int plateQuantity;
+    public int tectonicPoints;
+    public float heightDifferenceFromPlateType;
+    public float tectonicActivity;
+    [Header("Color")]
+    public float colorIndex;
 }
 
 [System.Serializable] public class PlateTectonic {

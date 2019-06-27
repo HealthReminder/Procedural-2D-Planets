@@ -12,5 +12,7 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.T))
             PlanetGenerator.instance.GeneratePlateTectonics(planet,planetSeed);
+        if(Input.GetKeyDown(KeyCode.Y))
+            PlanetGenerator.instance.GeneratePlateTectonics(planet,planetSeed);
     }
 }
