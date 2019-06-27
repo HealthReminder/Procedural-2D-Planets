@@ -7,6 +7,7 @@ public class PlanetGenerator : MonoBehaviour
     //public float initialBoneDistanceFromCore = 1;
     //public float heightDifferenceFromPlateType = 1;
     public static PlanetGenerator instance;
+    public AnimationCurve medianCurve;
     private void Awake() {
         instance = this;
     }
@@ -21,15 +22,21 @@ public class PlanetGenerator : MonoBehaviour
         GlobalNotification.instance.Reset();
         yield return null;
 
+
+
         float randomSeed = Random.Range(0,1f);
-        float tectonicsSeed = Random.Range(0f,1f);
         float transformSeed = Random.Range(0f,1f);
-        float oceanSeed = Random.Range(0.5f,1f);
-        Debug.Log("PLANET GENERATOR - Generated seeds");
+        float tectonicsSeed = Random.Range(0f,1f);
+        float oceanSeed = Random.Range(0.3f,1f - tectonicsSeed);
+        Debug.Log("PLANET GENERATOR - Aquired seeds");
 
         //tectonicsSeed = 1;
         transformSeed = 1;
         //oceanSeed = 1;
+        randomSeed = medianCurve.Evaluate(randomSeed);
+        tectonicsSeed = medianCurve.Evaluate(tectonicsSeed);
+        transformSeed = medianCurve.Evaluate(transformSeed);
+        oceanSeed = medianCurve.Evaluate(oceanSeed);
 
         
         float randomColor;
