@@ -12,26 +12,21 @@ public class PlanetGenerator : MonoBehaviour
         instance = this;
     }
 
-    public void GeneratePlateTectonics(Planet planet,int seed) {
-        StartCoroutine(GeneratePlateTectonicsRoutine(planet,seed));
+    public void GeneratePlateTectonics(Planet planet,float randomSeed ,float transformSeed ,float tectonicsSeed ,float oceanSeed,float colorSeed) {
+        StopCoroutine(GeneratePlateTectonicsRoutine(null,0,0,0,0,0));
+        StartCoroutine(GeneratePlateTectonicsRoutine(planet,randomSeed,transformSeed,tectonicsSeed,oceanSeed,colorSeed));
     }
-    IEnumerator GeneratePlateTectonicsRoutine(Planet planet,int seed){
+    IEnumerator GeneratePlateTectonicsRoutine(Planet planet ,float randomSeed ,float transformSeed ,float tectonicsSeed ,float oceanSeed,float colorSeed){
         Debug.Log("PLANET GENERATOR - Initiated");
 
         LineTest.instance.DisableLines();
         GlobalNotification.instance.Reset();
         yield return null;
 
-
-
-        float randomSeed = Random.Range(0,1f);
-        float transformSeed = Random.Range(0f,1f);
-        float tectonicsSeed = Random.Range(0f,1f);
-        float oceanSeed = Random.Range(0.3f,1f - tectonicsSeed);
         Debug.Log("PLANET GENERATOR - Aquired seeds");
 
         //tectonicsSeed = 1;
-        transformSeed = 1;
+        //transformSeed = 1;
         //oceanSeed = 1;
         tectonicsSeed = medianCurve.Evaluate(tectonicsSeed);
         transformSeed = medianCurve.Evaluate(transformSeed);
@@ -50,7 +45,7 @@ public class PlanetGenerator : MonoBehaviour
 
         
         Random.InitState((int)Mathf.Lerp(0,999999,randomSeed));
-        randomColor = Random.Range(0f,1f);
+        randomColor = colorSeed;
         initialBoneDistanceFromCore = Mathf.Lerp(1,3,transformSeed);
         plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
         tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed)+0.5f;

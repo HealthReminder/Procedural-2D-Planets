@@ -29,9 +29,11 @@ public class LineTest : MonoBehaviour
             if(nextIndex >= bones.Count)
                 nextIndex = 0;
             lines[i].SetPosition(1,bones[i].transform.worldToLocalMatrix.MultiplyPoint3x4(bones[nextIndex].transform.position));
-            lines[i].enabled = true;
             //yield return null;
         } 
+        for (int i = 0; i < bones.Count; i++)  
+            lines[i].enabled = true;
+
         yield break;
     }
 }
