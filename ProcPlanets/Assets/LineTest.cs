@@ -30,7 +30,7 @@ public class LineTest : MonoBehaviour
                 nextIndex = 0;
             lines[i].SetPosition(1,bones[i].transform.worldToLocalMatrix.MultiplyPoint3x4(bones[nextIndex].transform.position));
             lines[i].enabled = true;
-            yield return null;
+            //yield return null;
         } 
         yield break;
     }

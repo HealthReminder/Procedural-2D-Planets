@@ -33,7 +33,6 @@ public class PlanetGenerator : MonoBehaviour
         //tectonicsSeed = 1;
         transformSeed = 1;
         //oceanSeed = 1;
-        randomSeed = medianCurve.Evaluate(randomSeed);
         tectonicsSeed = medianCurve.Evaluate(tectonicsSeed);
         transformSeed = medianCurve.Evaluate(transformSeed);
         oceanSeed = medianCurve.Evaluate(oceanSeed);
@@ -54,7 +53,7 @@ public class PlanetGenerator : MonoBehaviour
         randomColor = Random.Range(0f,1f);
         initialBoneDistanceFromCore = Mathf.Lerp(1,3,transformSeed);
         plateQuantity = (int)Mathf.Lerp(2,12,tectonicsSeed);
-        tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed);
+        tectonicActivity = Mathf.Lerp(0,3,tectonicsSeed)+0.5f;
         tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,plateQuantity,tectonicsSeed));
         heightDifferenceFromPlateType = Mathf.Lerp(1,3, transformSeed);
         yield return null;
@@ -72,11 +71,11 @@ public class PlanetGenerator : MonoBehaviour
 
 
 
-        GlobalNotification.instance.PostNotification("Initial bone distance from core: <color=#ffff00ff>"+(int)(100*(initialBoneDistanceFromCore+1)/3)+"%</color>\n");
-        GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
-        GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
-        GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
-        Debug.Log("PLANET GENERATOR - Posted notifications");
+        //GlobalNotification.instance.PostNotification("Initial bone distance from core: <color=#ffff00ff>"+(int)(100*(initialBoneDistanceFromCore+1)/3)+"%</color>\n");
+        //GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
+        //GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
+        //GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
+        //Debug.Log("PLANET GENERATOR - Posted notifications");
 
         
 
@@ -164,8 +163,8 @@ public class PlanetGenerator : MonoBehaviour
 
         
 
-        GlobalNotification.instance.PostNotification("Tectonic activity: <color=#ffff00ff>"+(int)(100*tectonicActivity/3)+"%</color>\n");
-        GlobalNotification.instance.PostNotification("Tectonic points: <color=#ffff00ff>"+tectonicPoints+"</color>\n");
+        //GlobalNotification.instance.PostNotification("Tectonic activity: <color=#ffff00ff>"+(int)(100*tectonicActivity/3)+"%</color>\n");
+        //GlobalNotification.instance.PostNotification("Tectonic points: <color=#ffff00ff>"+tectonicPoints+"</color>\n");
         for (int currentPoint = 0; currentPoint < tectonicPoints; currentPoint++)
         {
             
