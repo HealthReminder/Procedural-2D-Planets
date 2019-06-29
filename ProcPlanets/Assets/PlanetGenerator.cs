@@ -17,13 +17,13 @@ public class PlanetGenerator : MonoBehaviour
         StartCoroutine(GeneratePlateTectonicsRoutine(planet,randomSeed,transformSeed,tectonicsSeed,oceanSeed,colorSeed));
     }
     IEnumerator GeneratePlateTectonicsRoutine(Planet planet ,float randomSeed ,float transformSeed ,float tectonicsSeed ,float oceanSeed,float colorSeed){
-        Debug.Log("PLANET GENERATOR - Initiated");
+        //Debug.Log("PLANET GENERATOR - Initiated");
 
         LineTest.instance.DisableLines();
         GlobalNotification.instance.Reset();
         yield return null;
 
-        Debug.Log("PLANET GENERATOR - Aquired seeds");
+        //Debug.Log("PLANET GENERATOR - Aquired seeds");
 
         //tectonicsSeed = 1;
         //transformSeed = 1;
@@ -40,7 +40,7 @@ public class PlanetGenerator : MonoBehaviour
         float heightDifferenceFromPlateType;
         float tectonicActivity;
         yield return null;
-        Debug.Log("PLANET GENERATOR - Cached variables");
+        //Debug.Log("PLANET GENERATOR - Cached variables");
 
 
         
@@ -52,7 +52,7 @@ public class PlanetGenerator : MonoBehaviour
         tectonicPoints = (int)(Mathf.Lerp(tectonicActivity,plateQuantity,tectonicsSeed));
         heightDifferenceFromPlateType = Mathf.Lerp(1,3, transformSeed);
         yield return null;
-        Debug.Log("PLANET GENERATOR - Generated variables ");
+        //Debug.Log("PLANET GENERATOR - Generated variables ");
 
 
         
@@ -62,7 +62,7 @@ public class PlanetGenerator : MonoBehaviour
         planet.data.initialBoneDistanceFromCore = initialBoneDistanceFromCore;
         planet.data.tectonicActivity = tectonicActivity;
         planet.data.colorIndex = randomColor;
-        Debug.Log("PLANET GENERATOR - Stored generated variables");
+        //Debug.Log("PLANET GENERATOR - Stored generated variables");
 
 
 
@@ -70,13 +70,13 @@ public class PlanetGenerator : MonoBehaviour
         //GlobalNotification.instance.PostNotification("Water percentage: <color=#ffff00ff>"+(int)(oceanSeed*100)+"%</color>\n");
         //GlobalNotification.instance.PostNotification("Plate tectonics quantity:  <color=#ffff00ff>"+plateQuantity+"</color>\n");
         //GlobalNotification.instance.PostNotification("Height difference from plate type: <color=#ffff00ff>"+(int)(100*(heightDifferenceFromPlateType+1)/3)+"%</color>\n");
-        //Debug.Log("PLANET GENERATOR - Posted notifications");
+        ////Debug.Log("PLANET GENERATOR - Posted notifications");
 
         
 
         PlanetView.instance.ChangeColor(randomColor,randomColor,randomColor);
         yield return null;
-        Debug.Log("PLANET GENERATOR - Changed colors");
+        //Debug.Log("PLANET GENERATOR - Changed colors");
             
 
     
@@ -87,12 +87,12 @@ public class PlanetGenerator : MonoBehaviour
             planetBones[currentBone].position = planet.transform.position + (planetBones[currentBone].right*10*-initialBoneDistanceFromCore);
         PlanetView.instance.ScaleOceans(Mathf.Lerp(1,3,transformSeed),oceanSeed);
         yield return null;
-        Debug.Log("PLANET GENERATOR - Reseted bone positions and collider");
+        //Debug.Log("PLANET GENERATOR - Reseted bone positions and collider");
         
 
 
         planet.transform.Rotate(new Vector3(0,0,Mathf.Lerp(0,360,transformSeed)));
-        Debug.Log("PLANET GENERATOR - Assigned initial random rotation");
+        //Debug.Log("PLANET GENERATOR - Assigned initial random rotation");
 
 
 
@@ -103,7 +103,7 @@ public class PlanetGenerator : MonoBehaviour
             newPlates[currentPlate].bones = new List<PlateBone>();
         }
         yield return null;
-        Debug.Log("PLANET GENERATOR - Reseted plates");
+        //Debug.Log("PLANET GENERATOR - Reseted plates");
 
 
 
@@ -119,7 +119,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("PLANET GENERATOR - Assigned reseted bones to plates");
+        //Debug.Log("PLANET GENERATOR - Assigned reseted bones to plates");
 
 
 
@@ -134,7 +134,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("PLANET GENERATOR - Assigned types, weights and initial movement force to plates");
+        //Debug.Log("PLANET GENERATOR - Assigned types, weights and initial movement force to plates");
 
         
 
@@ -154,7 +154,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         planet.plates = newPlates;
         yield return null;
-        Debug.Log("PLANET GENERATOR - Set initial plate positions");
+        //Debug.Log("PLANET GENERATOR - Set initial plate positions");
 
         
 
@@ -186,7 +186,7 @@ public class PlanetGenerator : MonoBehaviour
 
                     newPlates[currentPlateIndex].movementForce += currentForce;
                     Mathf.Clamp(newPlates[currentPlateIndex].movementForce,-3,4);
-                    Debug.Log("Set force of "+currentForce+" to plate "+currentPlateIndex+" from initial force of "+initialForce);
+                    ////Debug.Log("Set force of "+currentForce+" to plate "+currentPlateIndex+" from initial force of "+initialForce);
                     currentPlateIndex--;
                 }
             } else {
@@ -207,7 +207,7 @@ public class PlanetGenerator : MonoBehaviour
         }
         
         planet.plates = newPlates;
-        Debug.Log("PLANET GENERATOR - Distributed plate flows");
+        //Debug.Log("PLANET GENERATOR - Distributed plate flows");
 
 
         PlateTectonic leftPlate;
@@ -338,7 +338,7 @@ public class PlanetGenerator : MonoBehaviour
             }
             yield return null;   
         }
-        Debug.Log("PLANET GENERATOR - Ran early event interaction");
+        //Debug.Log("PLANET GENERATOR - Ran early event interaction");
 
 
 
@@ -351,7 +351,7 @@ public class PlanetGenerator : MonoBehaviour
         planet.collider.points = newColliderPoints;
         planet.enabled = true;
         yield return null;   
-        Debug.Log("PLANET GENERATOR - Fixed collider");
+        //Debug.Log("PLANET GENERATOR - Fixed collider");
 
 
 
@@ -364,11 +364,11 @@ public class PlanetGenerator : MonoBehaviour
 
         LineTest.instance.SetLines(planet.plates);
         yield return null;
-        Debug.Log("PLANET GENERATOR - Line test");
+        //Debug.Log("PLANET GENERATOR - Line test");
         
 
 
-        Debug.Log("TECTONICS - Ended");
+        //Debug.Log("TECTONICS - Ended");
 
 
         
@@ -386,10 +386,10 @@ public class PlanetGenerator : MonoBehaviour
 
             PlateBone bone = bones[currentBoneIndex];
             if(bone.pressure >= 1.35f){
-                //Debug.Log("Spawned volcano on "+bone.transform.name);
+                ////Debug.Log("Spawned volcano on "+bone.transform.name);
                 PlanetView.instance.SpawnVolcano(bone.transform);
             } else if(bone.pressure <= -1.8f){
-                //Debug.Log("Spawned underwater volcano on "+bone.transform.name);
+                ////Debug.Log("Spawned underwater volcano on "+bone.transform.name);
                 PlanetView.instance.SpawnUnderwaterVolcano(bone.transform);
             }
             placedVolcanos++;
@@ -411,7 +411,7 @@ public class PlanetGenerator : MonoBehaviour
                 return;
         }
 
-        //Debug.Log(bone.transform.name+"   "+(-1*direction*amount) + "   "+bone.pressure+ "   "+(bone.pressure+(-1*direction*amount)));
+        ////Debug.Log(bone.transform.name+"   "+(-1*direction*amount) + "   "+bone.pressure+ "   "+(bone.pressure+(-1*direction*amount)));
         float heightFromTransformSeed = Mathf.Lerp(0.3f,1f,transformSeed);
         bone.transform.position += bone.transform.right*direction*amount*heightFromTransformSeed;
         bone.pressure += -1*direction*amount*heightFromTransformSeed;
