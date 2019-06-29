@@ -17,24 +17,27 @@ public class GameManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.T)){
             
-            if(!isUsingSeed) {
+            //if(!isUsingSeed) {
                 //randomSeedInt = Random.Range(0,1);
                 //transformSeedInt = Random.Range(0.2f,0.8f);
                //tectonicsSeedInt = Random.Range(0,1);
                // oceanSeedInt = Random.Range(0.3f,1.5f - tectonicsSeedInt);
-            }
+            //}
+            GenerateRandomPlanet();
+        }
+    }
+    public void GenerateRandomPlanet() {
             float randomSeed = Random.Range(0f,1f);
             float transformSeed = Random.Range(0.2f,0.8f);
             float tectonicsSeed = Random.Range(0f,1f);
             float oceanSeed = Random.Range(0.3f,1.5f - tectonicsSeedInt);
             float colorSeed = 1-tectonicsSeed;
-            /*float randomSeed = (float)randomSeedInt/100;
+            /* float randomSeed = (float)randomSeedInt/100;
             float transformSeed = (float)transformSeedInt/100;
             float tectonicsSeed = (float)tectonicsSeedInt/100;
             float oceanSeed = (float)oceanSeedInt/100;   
             float colorSeed = 1-tectonicsSeed; */
             Debug.Log("Generating planet with the following seed: "+randomSeedInt+""+transformSeedInt+""+tectonicsSeedInt+""+oceanSeedInt+""+colorSeed);
             PlanetGenerator.instance.GeneratePlateTectonics(planet,randomSeed,transformSeed,tectonicsSeed,oceanSeed,colorSeed);
-        }
     }
 }

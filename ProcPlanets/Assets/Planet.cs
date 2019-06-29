@@ -3,13 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
    public class Planet : MonoBehaviour
 {
-    public PolygonCollider2D collider;
-    public Transform[]  bones;
-    [Header("Plate tectonics")]
-    
-    [SerializeField]  public PlateTectonic[] plates;
     public PlanetData data;
-    
+    public new PolygonCollider2D collider;
+    public Transform[]  bones;
     private void Awake() {
         data = new PlanetData();
     }
@@ -23,6 +19,7 @@ public class PlanetData {
     public float tectonicActivity;
     [Header("Color")]
     public float colorIndex;
+    [SerializeField]  public PlateTectonic[] plates;
 }
 
 [System.Serializable] public class PlateTectonic {
