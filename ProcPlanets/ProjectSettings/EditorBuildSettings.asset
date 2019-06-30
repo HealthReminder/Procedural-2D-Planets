@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 1
+    path: Assets/planetTest.unity
+    guid: ddf6d682307d89542894172c59406d79
   m_configObjects: {}

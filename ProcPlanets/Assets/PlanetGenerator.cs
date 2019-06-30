@@ -20,7 +20,7 @@ public class PlanetGenerator : MonoBehaviour
         //Debug.Log("PLANET GENERATOR - Initiated");
 
         LineTest.instance.DisableLines();
-        GlobalNotification.instance.Reset();
+        //GlobalNotification.instance.Reset();
         yield return null;
 
         //Debug.Log("PLANET GENERATOR - Aquired seeds");
@@ -117,7 +117,7 @@ public class PlanetGenerator : MonoBehaviour
             newBone.transform = planetBones[currentBone];
             newPlates[identification].bones.Add(newBone);
         }
-        planet.data.plates = newPlates;
+        planet.plates = newPlates;
         yield return null;
         //Debug.Log("PLANET GENERATOR - Assigned reseted bones to plates");
 
@@ -132,7 +132,7 @@ public class PlanetGenerator : MonoBehaviour
                 newPlates[currentPlate].weightIndex = (Random.Range(1,5));
             }newPlates[currentPlate].movementForce = 0;
         }
-        planet.data.plates = newPlates;
+        planet.plates = newPlates;
         yield return null;
         //Debug.Log("PLANET GENERATOR - Assigned types, weights and initial movement force to plates");
 
@@ -148,11 +148,11 @@ public class PlanetGenerator : MonoBehaviour
                     currentBone = currentPlate.bones[currentBoneIndex];
                     currentBone.transform.position += -currentBone.transform.right * heightDifferenceFromPlateType;
                     currentBone.translation += -currentBone.transform.right * heightDifferenceFromPlateType;
-
+                    //yield return null;
                 }
             yield return null;
         }
-        planet.data.plates = newPlates;
+        planet.plates = newPlates;
         yield return null;
         //Debug.Log("PLANET GENERATOR - Set initial plate positions");
 
@@ -206,7 +206,7 @@ public class PlanetGenerator : MonoBehaviour
             yield return null;    
         }
         
-        planet.data.plates = newPlates;
+        planet.plates = newPlates;
         //Debug.Log("PLANET GENERATOR - Distributed plate flows");
 
 
@@ -355,14 +355,14 @@ public class PlanetGenerator : MonoBehaviour
 
 
 
-        foreach(PlateTectonic currentPlate in planet.data.plates){
+        foreach(PlateTectonic currentPlate in planet.plates){
             AddPlateFeatures(currentPlate.bones,1+((int)tectonicActivity/2));
             yield return null;
         }
 
 
 
-        LineTest.instance.SetLines(planet.data.plates);
+        LineTest.instance.SetLines(planet.plates);
         yield return null;
         //Debug.Log("PLANET GENERATOR - Line test");
         

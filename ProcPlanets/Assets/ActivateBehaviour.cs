@@ -5,21 +5,22 @@ using UnityEngine;
 public class ActivateBehaviour : MonoBehaviour
 {
     public bool isActiveOnStart = false;
+    public GameObject target;
     void Start()
     {
         if(isActiveOnStart)
-            gameObject.SetActive(true);
+            target.SetActive(true);
     }
     public void DelayedDeactivate(float delay){
         Invoke("Deactivate",delay);
     }
     void Deactivate(){
-        gameObject.SetActive(false);
+        target.SetActive(false);
     }
     public void DelayedActivate(float delay){
         Invoke("Activate",delay);
     }
     void Activate(){
-        gameObject.SetActive(true);
+        target.SetActive(true);
     }
 }
